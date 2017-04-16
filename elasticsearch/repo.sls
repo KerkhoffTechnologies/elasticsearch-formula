@@ -36,4 +36,5 @@ elasticsearch_repo:
     - enabled: 1
     - gpgcheck: 1
     - gpgkey: http://artifacts.elastic.co/GPG-KEY-elasticsearch
+    - refresh_db: true
 {%- endif %}

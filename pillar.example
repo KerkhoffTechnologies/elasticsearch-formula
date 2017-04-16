@@ -21,3 +21,51 @@ elasticsearch:
   plugins:
     lang-python: lang-python
     kopf: lmenezes/elasticsearch-kopf
+  filebeat: !aggregate
+    spool_size: 2048
+    publish_async: false
+    idle_timeout: 5s
+    registry_file: ${path.data}/registry
+    shutdown_timeout: 0
+    prospectors: !aggregate
+      log: !aggregate
+        paths: !aggregate
+          - /var/log/*.log
+        encoding: plain
+        exclude_lines: ["^DBG"]
+        include_lines: ["^ERR", "^WARN"]
+        exclude_files: [".gz$"]
+        fields:
+          level: debug
+          review: 1
+        fields_under_root: false
+        ignore_older: 0
+        document_type: log
+        scan_frequency: 10s
+        harvester_buffer_size: 16384
+        max_bytes: 10485760
+        json.message_key:
+        json.keys_under_root: false
+        json.overwrite_keys: false
+        json.add_error_key: false
+        multiline.pattern: ^\[
+        multiline.negate: false
+        multiline.match: after
+        multiline.max_lines: 500
+        multiline.timeout: 5s
+        tail_files: false
+        pipeline:
+        symlinks: false
+        backoff: 1s
+        max_backoff: 10s
+        backoff_factor: 2
+        harvester_limit: 0
+        close_inactive: 5m
+        close_renamed: false
+        close_removed: true
+        close_eof: false
+        clean_inactive: 0
+        clean_removed: true
+        close_timeout: 0
+        enabled: true
+      
